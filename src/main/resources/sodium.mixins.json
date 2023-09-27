@@ -59,6 +59,8 @@
     "features.render.model.block.BlockModelRendererMixin",
     "features.render.model.item.ItemRendererMixin",
     "features.render.particle.BillboardParticleMixin",
+    "features.render.particle.ParticleManagerMixin",
+    "features.render.particle.ParticleMixin",
     "features.render.world.clouds.BackgroundRendererInvoker",
     "features.render.world.clouds.WorldRendererMixin",
     "features.render.world.sky.BackgroundRendererMixin",
