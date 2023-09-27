@@ -168,16 +168,15 @@ public class SodiumWorldRenderer {
         float yaw = camera.getYaw();
         float fogDistance = RenderSystem.getShaderFogEnd();
 
-        boolean dirty = pos.x != this.lastCameraX || pos.y != this.lastCameraY || pos.z != this.lastCameraZ ||
+        boolean cameraLocationChanged = pos.x != this.lastCameraX || pos.y != this.lastCameraY || pos.z != this.lastCameraZ;
+        boolean dirty = cameraLocationChanged ||
                 pitch != this.lastCameraPitch || yaw != this.lastCameraYaw || fogDistance != this.lastFogDistance;
 
         if (dirty) {
             this.renderSectionManager.markGraphDirty();
         }
 
-        this.lastCameraX = pos.x;
-        this.lastCameraY = pos.y;
-        this.lastCameraZ = pos.z;
+
         this.lastCameraPitch = pitch;
         this.lastCameraYaw = yaw;
         this.lastFogDistance = fogDistance;
@@ -193,7 +192,16 @@ public class SodiumWorldRenderer {
         if (this.renderSectionManager.needsUpdate()) {
             profiler.swap("chunk_render_lists");
 
-            this.renderSectionManager.update(camera, viewport, frame, spectator);
+            this.renderSectionManager.update(pos.toVector3f(), camera, viewport, frame, spectator);
+        }
+
+        if (cameraLocationChanged) {
+            profiler.swap("gfni_query");
+
+            this.renderSectionManager.processGFNIMovement(lastCameraX, lastCameraY, lastCameraZ, pos.x, pos.y, pos.z);
+            this.lastCameraX = pos.x;
+            this.lastCameraY = pos.y;
+            this.lastCameraZ = pos.z;
         }
 
         if (updateChunksImmediately) {
